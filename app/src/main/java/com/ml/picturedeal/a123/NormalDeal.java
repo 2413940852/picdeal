@@ -2,6 +2,7 @@ package com.ml.picturedeal.a123;
 
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
@@ -41,10 +42,10 @@ public class NormalDeal extends AppCompatActivity implements View.OnClickListene
     }
 
     private void initView(){
-        ic = findViewById(R.id.np_image_preview);
+        ic          = findViewById(R.id.np_image_preview);
         ImageCroup  = findViewById(R.id.np_image_crop);
         creatNewPic = findViewById(R.id.nd_creat_new_pic);
-        ImageCroup.setOnClickListener(this);
+        ImageCroup .setOnClickListener(this);
         creatNewPic.setOnClickListener(this);
     }
     private void upView(Bitmap bm) {
@@ -64,9 +65,9 @@ public class NormalDeal extends AppCompatActivity implements View.OnClickListene
         startActivityForResult(Intent.createChooser(intent,getString(R.string.select_pic)), REQUEST_SELECT_PICTURE);
     }
     //裁剪activity
-    private void startCropActivity(@NonNull Uri uri) {
+    private void startCropActivity() {
         String destinationFileName = SAMPLE_CROPPED_IMAGE_NAME;
-
+        Uri uri = getImageUri();
         UCrop uCrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
         UCrop.Options options = new UCrop.Options();
         options.setFreeStyleCropEnabled(true);
@@ -75,6 +76,11 @@ public class NormalDeal extends AppCompatActivity implements View.OnClickListene
         // uCrop = advancedConfig(uCrop);
 
         uCrop.start(NormalDeal.this);
+    }
+    //将image转为uri
+    private Uri getImageUri() {
+
+        return null;
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -86,7 +92,13 @@ public class NormalDeal extends AppCompatActivity implements View.OnClickListene
                     try {
                         bm = MediaStore.Images.Media.getBitmap(getContentResolver(),data.getData());
                         upView(bm);
-                    }catch (Exception e){e.printStackTrace();}
+//                        Cursor cursor = NormalDeal.this.getContentResolver().query(selectedUri, null, null, null, null);
+//                        cursor.moveToFirst();
+//                        String path = cursor.getString(1); // 图片文件路径
+//                        cursor.close();
+//                        Log.d("pic","图片路径"+path);
+
+                    }catch (Exception e){ Log.d("pic","错误"+e);;}
                 } else {
                     Toast.makeText(NormalDeal.this, "", Toast.LENGTH_SHORT).show();
                 }
@@ -102,7 +114,7 @@ public class NormalDeal extends AppCompatActivity implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.np_image_crop:
-
+                startCropActivity();
                 break;
             case R.id.nd_creat_new_pic:
                 pickFromGallery();
@@ -110,4 +122,6 @@ public class NormalDeal extends AppCompatActivity implements View.OnClickListene
 
         }
     }
+
+
 }
